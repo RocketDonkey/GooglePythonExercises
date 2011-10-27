@@ -40,11 +40,16 @@ def extract_names(filename):
   followed by the name-rank strings in alphabetical order.
   ['2006', 'Aaliyah 91', Aaron 57', 'Abagail 895', ' ...]
   """
+  #File contents
   filer = open(filename, 'rU')
   file_output = filer.read()
 
   #Year
   year_regex = re.search(r'<h3 align=\"center\">Popularity\s*in\s*(\d+)</h3>', file_output)
+  
+  #Names and rank: rank (group 1), Male (group 2), Female (group 3)
+  re.findall(r'<tr align=\"right\"><td>(\d+)</td><td>(\w+)</td><td>(\w+)</td>', file_output)
+  
 
   return
 
