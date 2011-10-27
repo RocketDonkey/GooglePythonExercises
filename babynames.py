@@ -20,6 +20,7 @@ Suggested milestones for incremental development:
  -Get the names data into a dict and print it
  -Build the [year, 'name rank', ... ] list and print it
  -Fix main() to use the extract_names list
+ -Practice posting this to GitHub! SWEET.
 """
 
 def extract_names(filename):
