@@ -38,7 +38,11 @@ def extract_names(filename):
   
   #Names and rank: rank (group 1), Male (group 2), Female (group 3)
   re.findall(r'<tr align=\"right\"><td>(\d+)</td><td>(\w+)</td><td>(\w+)</td>', file_output)
-  
+
+
+
+  #Print the year
+  print year_regex
 
   return
 
