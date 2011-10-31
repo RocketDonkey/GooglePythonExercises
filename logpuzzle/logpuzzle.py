@@ -19,9 +19,6 @@ Here's what a puzzle url looks like:
 10.254.254.28 - - [06/Aug/2007:00:13:48 -0700] "GET /~foo/puzzle-bar-aaab.jpg HTTP/1.0" 302 528 "-" "Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.8.1.6) Gecko/20070725 Firefox/2.0.0.6"
 """
 
-#Global URL variable
-#puzzle_urls = []
-
 def read_urls(filename):
   """Returns a list of the puzzle urls from the given log file,
   extracting the hostname from the filename itself.
@@ -49,8 +46,6 @@ def read_urls(filename):
     puzzle_urls.sort()
   elif filename == 'place_code.google.com':
     puzzle_urls = sorted(puzzle_urls, key=URL_sort)
-    #sorttest = open('SORTTEST.txt', 'w')
-    #sorttest.write('\n'.join(puzzle_urls))
             
   return puzzle_urls
 
