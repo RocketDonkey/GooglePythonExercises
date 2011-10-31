@@ -6,8 +6,6 @@
 # Google's Python Class
 # http://code.google.com/edu/languages/google-python-class/
 
-puzzle_urls = []
-
 import os
 import re
 import sys
@@ -20,6 +18,9 @@ Given an apache logfile, find the puzzle urls and download the images.
 Here's what a puzzle url looks like:
 10.254.254.28 - - [06/Aug/2007:00:13:48 -0700] "GET /~foo/puzzle-bar-aaab.jpg HTTP/1.0" 302 528 "-" "Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.8.1.6) Gecko/20070725 Firefox/2.0.0.6"
 """
+
+#Global URL variable
+#puzzle_urls = []
 
 def read_urls(filename):
   """Returns a list of the puzzle urls from the given log file,
@@ -43,24 +44,27 @@ def read_urls(filename):
   unique_urls = set(puzzle_urls)
   puzzle_urls = list(unique_urls)
 
-  #Sort the URLs
+  #Sort the URLs. Use a special sort if 'place_' file is specified
   if filename == 'animal_code.google.com':
     puzzle_urls.sort()
   elif filename == 'place_code.google.com':
-    sorted(puzzle_urls, key=URL_sort)
-    sorttest = open('SORTTEST.txt', 'w')
-    sorttest.write('\n'.join(puzzle_urls))
+    puzzle_urls = sorted(puzzle_urls, key=URL_sort)
+    #sorttest = open('SORTTEST.txt', 'w')
+    #sorttest.write('\n'.join(puzzle_urls))
             
   return puzzle_urls
 
 def URL_sort(URL):
+  #Look for the matching pattern
+  key = re.search(r'\-\w+\-(\w+)\.jpg', URL)
+  
   #If URL ends in '-words-words.jpg', use the second
   #'words' as the sort key. Otherwise, use the part before .jpg
-  key = re.search(r'\-\w+\-(\w+)\.jpg', URL)
   if key.group(1):
     URL_key = key.group(1)
   else:
     URL_key = re.search(r'\/([\w\-]+)\.jpg', URL).group(1)
+
   return URL_key
 
 def download_images(img_urls, dest_dir):
