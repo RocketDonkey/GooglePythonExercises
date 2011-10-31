@@ -44,9 +44,24 @@ def read_urls(filename):
   puzzle_urls = list(unique_urls)
 
   #Sort the URLs
-  puzzle_urls.sort()
-
+  if filename == 'animal_code.google.com':
+    puzzle_urls.sort()
+  elif filename == 'place_code.google.com':
+    sorted(puzzle_urls, key=URL_sort)
+    sorttest = open('SORTTEST.txt', 'w')
+    sorttest.write('\n'.join(puzzle_urls))
+            
   return puzzle_urls
+
+def URL_sort(URL):
+  #If URL ends in '-words-words.jpg', use the second
+  #'words' as the sort key. Otherwise, use the part before .jpg
+  key = re.search(r'\-\w+\-(\w+)\.jpg', URL)
+  if key.group(1):
+    URL_key = key.group(1)
+  else:
+    URL_key = re.search(r'\/([\w\-]+)\.jpg', URL).group(1)
+  return URL_key
 
 def download_images(img_urls, dest_dir):
   """Given the urls already in the correct order, downloads
@@ -114,7 +129,7 @@ def main():
     print '\n'.join(img_urls)
   """
   #Read all URLs from the log file
-  puzzle_urls = read_urls('animal_code.google.com')
+  puzzle_urls = read_urls('place_code.google.com')
 
   #Combine them all into one image
   download_images(puzzle_urls, 'ImageFolder')
