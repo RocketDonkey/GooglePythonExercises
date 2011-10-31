@@ -6,10 +6,13 @@
 # Google's Python Class
 # http://code.google.com/edu/languages/google-python-class/
 
+puzzle_urls = []
+
 import os
 import re
 import sys
 import urllib
+import urllib2
 
 """Logpuzzle exercise
 Given an apache logfile, find the puzzle urls and download the images.
@@ -18,14 +21,32 @@ Here's what a puzzle url looks like:
 10.254.254.28 - - [06/Aug/2007:00:13:48 -0700] "GET /~foo/puzzle-bar-aaab.jpg HTTP/1.0" 302 528 "-" "Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.8.1.6) Gecko/20070725 Firefox/2.0.0.6"
 """
 
-
 def read_urls(filename):
   """Returns a list of the puzzle urls from the given log file,
   extracting the hostname from the filename itself.
   Screens out duplicate urls and returns the urls sorted into
   increasing order."""
-  # +++your code here+++
+  f = open(filename, 'rU')
+  log_contents = f.read()
+
+  #Get the path of the hostname
+  hostname = 'http://' + re.search(r'\_([\w\.]+)', filename).group(1)
   
+  #Pull URLs with "puzzle" in the path
+  puzzle_urls = re.findall(r'\"GET\s([^\s]+puzzle[^\s]+)\s*\w', log_contents)
+
+  #Combine hostname and puzzle_urls
+  for i in range(0, len(puzzle_urls)):
+    puzzle_urls[i] = hostname + puzzle_urls[i]
+    
+  #Filter for uniques
+  unique_urls = set(puzzle_urls)
+  puzzle_urls = list(unique_urls)
+
+  #Sort the URLs
+  puzzle_urls.sort()
+
+  return puzzle_urls
 
 def download_images(img_urls, dest_dir):
   """Given the urls already in the correct order, downloads
@@ -35,10 +56,45 @@ def download_images(img_urls, dest_dir):
   with an img tag to show each local image file.
   Creates the directory if necessary.
   """
-  # +++your code here+++
+
+  #If the directory doesn't exist, create it
+  if not os.path.exists(dest_dir):
+    os.makedirs(dest_dir)
+
+  #Create HTML file
+  image_file = open(dest_dir + '\\SecretImage.html', 'w')
+  image_file.write('<html>')
+  image_file.write('<body>')
   
+  """
+  Loop through each URL, downloading the image and appending
+  the HTML output with the proper tag that calls the image
+  """
+  #Sentinel for img number
+  i = 0
+  
+  for URL in img_urls:
+
+    #Create the files
+    filename = 'img' + str(i) + URL[-4:]
+    filedirname = dest_dir + '\\' + filename
+
+    #Print status
+    print 'Retrieving: ' + filename
+
+    #Download the image
+    image_url = urllib.urlretrieve(URL, filedirname)
+
+    #Add the proper HTML to the HTML file to create the full image
+    image_file.write('<img src =\"' + filename + '\">')
+
+    #Increment number in filename
+    i += 1
 
 def main():
+  """
+  Since pathing is all bamboozled on the work computer, reconfigure to just
+  run off of the specified file.
   args = sys.argv[1:]
 
   if not args:
@@ -56,6 +112,12 @@ def main():
     download_images(img_urls, todir)
   else:
     print '\n'.join(img_urls)
+  """
+  #Read all URLs from the log file
+  puzzle_urls = read_urls('animal_code.google.com')
 
+  #Combine them all into one image
+  download_images(puzzle_urls, 'ImageFolder')
+  
 if __name__ == '__main__':
   main()
